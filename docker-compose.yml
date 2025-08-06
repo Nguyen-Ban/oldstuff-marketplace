@@ -1,0 +1,31 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: users
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3309:3306"
+
+  user-service:
+    build: ./user-service
+    environment:
+      MYSQL_DB: users
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_HOST: mysql
+      JWT_SECRET: supersecret
+    depends_on:
+      - mysql
+    ports:
+      - "3001:3001"
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
