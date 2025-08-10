@@ -20,7 +20,10 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('buyer', 'seller'),
     defaultValue: 'buyer',
     allowNull: false,
-  },
+  }
+}, {
+  tableName: 'user',
+  timestamps: false 
 })
 
 module.exports = User;

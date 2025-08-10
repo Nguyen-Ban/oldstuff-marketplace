@@ -10,6 +10,13 @@ app.use('/user', (req, res) => {
     res.status(500).send('Something went wrong with the user service')
   })})
 
+app.use('/product', (req, res) => {
+  proxy.web(req, res, { target: 'http://product-service:3002' }, (error) => {
+    console.error('Proxy error:', error)
+    res.status(500).send('Something went wrong with the product service')
+  })
+})
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`API Gateway is running on port ${PORT}`)

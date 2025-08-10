@@ -1,6 +1,6 @@
 version: '3'
 services:
-  mysql:
+  user-mysql:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
@@ -16,16 +16,44 @@ services:
       MYSQL_DB: users
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-      MYSQL_HOST: mysql
+      MYSQL_HOST: user-mysql
       JWT_SECRET: supersecret
     depends_on:
-      - mysql
+      - user-mysql
     ports:
       - "3001:3001"
+  
+  product-mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: products
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3308:3306"
+
+  product-service:
+    build: ./product-service
+    environment:
+      MYSQL_DB: products
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_HOST: product-mysql
+      JWT_SECRET: supersecret
+      USER_SERVICE_URL: http://user-service:3001
+
+    depends_on:
+      - product-mysql
+    ports:
+      - "3002:3002"
 
   api-gateway:
     build: ./api-gateway
+    environment:
+      JWT_SECRET: supersecret
     ports:
       - "3000:3000"
     depends_on:
       - user-service
+      - product-service
