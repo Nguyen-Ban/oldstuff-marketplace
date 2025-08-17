@@ -6,6 +6,6 @@ const { authenticate } = require('../middleware/authMiddleware');
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.post('/upgrade', authenticate, userController.upgradeToSeller);
-router.get('/verify-seller', userController.verifySeller);
+router.get('/verify-user', userController.verifyUser);
 
 module.exports = router;
