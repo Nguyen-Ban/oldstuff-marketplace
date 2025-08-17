@@ -48,6 +48,31 @@ services:
     ports:
       - "3002:3002"
 
+  order-mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: orders
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    
+  order-service:
+    build: ./order-service
+    environment:
+      MYSQL_DB: orders
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_HOST: order-mysql
+      JWT_SECRET: supersecret
+      USER_SERVICE_URL: http://user-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+    depends_on:
+      - order-mysql
+    ports:
+      - "3003:3003"
+
   api-gateway:
     build: ./api-gateway
     environment:
@@ -57,3 +82,4 @@ services:
     depends_on:
       - user-service
       - product-service
+      - order-service

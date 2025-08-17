@@ -17,6 +17,13 @@ app.use('/product', (req, res) => {
   })
 })
 
+app.use('/order', (req, res) => {
+  proxy.web(req, res, { target: 'http://order-service:3003' }, (error) => {
+    console.error('Proxy error:', error)
+    res.status(500).send('Something went wrong with the order service')
+  })
+})
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`API Gateway is running on port ${PORT}`)
