@@ -16,7 +16,7 @@ exports.authenticate = async (req, res, next) => {
     // const token = authHeader.split(' ')[1];
 
     const response = await axios.get(
-      `${process.env.USER_SERVICE_URL || 'http://localhost:3001'}/verify-seller`,
+      `${process.env.USER_SERVICE_URL || 'http://localhost:3001'}/verify-user`,
       {
         headers: { Authorization: token }
       }
