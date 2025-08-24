@@ -9,5 +9,6 @@ router.get('/get-all-products', authenticate, productController.getAllProductByS
 router.delete('/delete/:id', authenticate, productController.deleteProduct);
 router.put('/update/:id', authenticate, productController.updateProduct);
 router.get('/get-public-product/:id', productController.getPublicProductById);
+router.get('/products', productController.getProductsByFilter);
 
 module.exports = router;

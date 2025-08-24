@@ -1,4 +1,5 @@
 const Product = require('../model/product');
+const { Op } = require('sequelize');
 
 exports.createProduct = async (req, res) => {
    if (req.user.role !== 'seller') {
@@ -114,4 +115,39 @@ exports.updateProduct = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+};
+
+exports.getProductsByFilter = async (req, res) => {
+  try {
+    const { topic, minPrice, maxPrice } = req.query;
+
+    const where = {};
+
+    if (topic) {
+      where.category = topic;
+    }
+
+    if (minPrice && maxPrice) {
+      where.price = {
+        [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)]
+      };
+    } else if (minPrice) {
+      where.price = {
+        [Op.gte]: parseFloat(minPrice)
+      };
+    } else if (maxPrice) {
+      where.price = {
+        [Op.lte]: parseFloat(maxPrice)
+      };
+    }
+
+    const products = await Product.findAll({
+      where,
+      limit: 5
+    });
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

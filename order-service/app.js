@@ -1,9 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const orderRoutes = require('./src/route/orderRoutes');
-const { sequelize } = require('./src/model/order');
+const sequelize = require('./src/config/db');
 
+app.use(cors());
 app.use(express.json());
 app.use('/', orderRoutes);
 
