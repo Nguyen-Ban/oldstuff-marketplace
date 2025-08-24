@@ -8,7 +8,8 @@ app.use('/user', (req, res) => {
   proxy.web(req, res, { target: 'http://user-service:3001' }, (error) => {
     console.error('Proxy error:', error)
     res.status(500).send('Something went wrong with the user service')
-  })})
+  })
+})
 
 app.use('/product', (req, res) => {
   proxy.web(req, res, { target: 'http://product-service:3002' }, (error) => {
@@ -21,6 +22,13 @@ app.use('/order', (req, res) => {
   proxy.web(req, res, { target: 'http://order-service:3003' }, (error) => {
     console.error('Proxy error:', error)
     res.status(500).send('Something went wrong with the order service')
+  })
+})
+
+app.use('/blindbox', (req, res) => {
+  proxy.web(req, res, { target: 'http://blindbox-service:3004' }, (error) => {
+    console.error('Proxy error:', error)
+    res.status(500).send('Something went wrong with the blindbox service')
   })
 })
 
