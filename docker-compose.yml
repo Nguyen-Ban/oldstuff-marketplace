@@ -77,7 +77,7 @@ services:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: blindboxs
+      MYSQL_DATABASE: blindboxes
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
@@ -86,7 +86,7 @@ services:
   blindbox-service:
     build: ./blindbox-service
     environment:
-      MYSQL_DB: blindboxs
+      MYSQL_DB: blindboxes
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_HOST: blindbox-mysql

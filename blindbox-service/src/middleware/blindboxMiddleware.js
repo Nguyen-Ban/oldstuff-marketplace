@@ -24,7 +24,7 @@ exports.authenticate = async (req, res, next) => {
 
     console.log('[AUTH] User verification response:', response.data);
 
-    req.user = response.data.user; // Lưu thông tin user vào req
+    req.user = response.data; // Lưu thông tin user vào req
     next();
   } catch (error) {
     console.error('[AUTH ERROR] Failed to verify token');

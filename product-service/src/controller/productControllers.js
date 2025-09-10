@@ -7,7 +7,10 @@ exports.createProduct = async (req, res) => {
   }
 
   try {
-    const product = await Product.create(req.body);
+    const product = await Product.create({
+      ...req.body,
+      userId: req.user.id
+    });
     res.status(201).json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -62,6 +65,17 @@ exports.getPublicProductById = async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
     res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getPublicAllProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      attributes: ['id', 'name', 'price']
+    });
+    res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
