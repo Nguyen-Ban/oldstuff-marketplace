@@ -22,7 +22,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || 'supersecret', { expiresIn: '1h' });
-    res.json({ token });
+    res.json({ token, role: user.role });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -68,5 +68,35 @@ exports.verifyUser = async (req, res) => {
     res.json(user);
   } catch {
     res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Only admins can access this resource' });
+    }
+
+    const users = await User.findAll({ attributes: ['id', 'email', 'role'] });
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Only admins can delete users' });
+    }
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

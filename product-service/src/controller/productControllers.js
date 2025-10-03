@@ -2,15 +2,23 @@ const Product = require('../model/product');
 const { Op } = require('sequelize');
 
 exports.createProduct = async (req, res) => {
-   if (req.user.role !== 'seller') {
+  if (req.user.role === 'buyer') {
     return res.status(403).json({ error: 'Only sellers can create products' });
   }
 
   try {
+    let imageUrl;
+    if (req.file) {
+      // multer-storage-cloudinary gắn trực tiếp secure_url
+      imageUrl = req.file.path; 
+    }
+
     const product = await Product.create({
       ...req.body,
-      userId: req.user.id
+      userId: req.user.id,
+      imageUrl
     });
+
     res.status(201).json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -21,7 +29,7 @@ exports.getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    if (req.user.role !== 'seller') {
+    if (req.user.role === 'buyer') {
       return res.status(403).json({ error: 'Only sellers can delete products' });
     }
 
@@ -31,7 +39,6 @@ exports.getProductById = async (req, res) => {
             userId: req.user.id
         }
     })
-
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -43,7 +50,7 @@ exports.getProductById = async (req, res) => {
 
 exports.getAllProductBySeller = async (req, res) => {
     try {
-    if (req.user.role !== 'seller') {
+    if (req.user.role === 'buyer') {
       return res.status(403).json({ error: 'Only sellers can view their product list' });
     }
 
@@ -60,7 +67,7 @@ exports.getAllProductBySeller = async (req, res) => {
 exports.getPublicProductById = async (req, res) => {
   try {
     const { id } = req.params
-    const product = await Product.findByPk(id, { attributes: ['id', 'name', 'price'] });
+    const product = await Product.findByPk(id, { attributes: ['id', 'name', 'price', 'imageUrl', 'category', 'description'] });
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -73,7 +80,7 @@ exports.getPublicProductById = async (req, res) => {
 exports.getPublicAllProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
-      attributes: ['id', 'name', 'price']
+      attributes: ['id', 'name', 'price', 'imageUrl', 'category', 'description']
     });
     res.json(products);
   } catch (err) {
@@ -85,7 +92,7 @@ exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-    if (req.user.role !== 'seller') {
+    if (req.user.role === 'buyer') {
       return res.status(403).json({ error: 'Only sellers can delete products' });
     }
 
@@ -109,7 +116,7 @@ exports.updateProduct = async (req, res) => {
     const { id } = req.params;
 
     try {
-        if (req.user.role !== 'seller') {
+        if (req.user.role === 'buyer') {
             return res.status(403).json({ error: 'Only sellers can update products' });
         }
 
@@ -122,6 +129,12 @@ exports.updateProduct = async (req, res) => {
 
         if (!product) {
             return res.status(404).json({ error: 'Product not found' });
+        }
+
+        let imageUrl;
+        if (req.file) {
+          imageUrl = req.file.path;
+          req.body.imageUrl = imageUrl;
         }
 
         const updatedProduct = await product.update(req.body);

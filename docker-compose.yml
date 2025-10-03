@@ -43,6 +43,10 @@ services:
       JWT_SECRET: supersecret
       USER_SERVICE_URL: http://user-service:3001
 
+      CLOUDINARY_CLOUD_NAME: xxx
+      CLOUDINARY_API_KEY: xxx
+      CLOUDINARY_API_SECRET: xxx
+
     depends_on:
       - product-mysql
     ports:

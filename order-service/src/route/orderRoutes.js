@@ -5,5 +5,7 @@ const { authenticate } = require('../middleware/authMiddleware');
 
 router.post('/create', authenticate, orderController.createOrder);
 router.get('/get-orders', authenticate, orderController.getOrderByUser);
+router.get('/get-order-items/:orderId', authenticate, orderController.getOrderItemsByOrder);
+router.put('/update-order-status/:orderId', authenticate, orderController.updateOrderStatus);
 
 module.exports = router;
