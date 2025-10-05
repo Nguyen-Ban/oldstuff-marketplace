@@ -7,6 +7,8 @@ services:
       MYSQL_DATABASE: users
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+    volumes:
+      - user_data:/var/lib/mysql
     ports:
       - "3309:3306"
 
@@ -30,6 +32,8 @@ services:
       MYSQL_DATABASE: products
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+    volumes:
+      - product_data:/var/lib/mysql
     ports:
       - "3308:3306"
 
@@ -59,6 +63,8 @@ services:
       MYSQL_DATABASE: orders
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+    volumes:
+      - order_data:/var/lib/mysql
     ports:
       - "3310:3306"
     
@@ -114,3 +120,16 @@ services:
       - product-service
       - order-service
       - blindbox-service
+
+  frontend:
+    build: ../MARKETPLACE-FRONTEND   # đường dẫn ra ngoài repo frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  user_data:
+  product_data:
+  order_data:
+  blindbox_data:
